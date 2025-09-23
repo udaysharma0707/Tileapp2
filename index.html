@@ -1,10 +1,9 @@
-
 <!doctype html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Purchase Entry</title>
+  <title>Tile Purchase Entry</title>
   <link rel="manifest" href="manifest.json">
   <style>
     html,body { height:100%; margin:0; padding:0; }
@@ -20,122 +19,222 @@
       padding:20px;
       box-sizing:border-box;
     }
-
     .container {
       width:100%;
-      max-width:520px;
-      background: rgba(255,255,255,0.92);
+      max-width:720px;
+      background: rgba(255,255,255,0.98);
       border-radius:10px;
       padding:14px;
       box-sizing:border-box;
       box-shadow: 0 6px 18px rgba(0,0,0,0.15);
       position: relative;
     }
-    .sheet-link {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: #2c7be5;
-      color: #fff;
-      padding: 6px 10px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-size: 13px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-    }
-
     h1{font-size:20px;margin:0 0 10px 0}
     .q-label{display:block;margin-top:10px;font-weight:600}
-
     input[type="text"], input[type="number"], select, textarea {
       width:100%; padding:8px; font-size:15px; margin-top:6px; box-sizing:border-box;
       border:1px solid #ccc; border-radius:4px;
     }
-
-    .checkbox-row { display:block; margin-top:6px; padding:0; }
-    .checkbox-row .cb {
-      display:block !important;
-      width:100% !important;
-      padding:6px 0 !important;
-      margin:0 0 6px 0 !important;
-      box-sizing:border-box !important;
-      font-weight:normal;
-    }
-    .checkbox-row .cb input[type="checkbox"] {
-      transform: scale(1.5);
-      margin-right: 12px;
-      accent-color: #2c7be5;
-    }
-
-    .radio-row { display:flex; gap:8px; margin-top:6px; }
-    .radio-row label { display:flex; align-items:center; gap:8px; }
-
-    button{
-      margin-top:12px;
-      padding:10px 14px;
-      font-size:16px;
-      border-radius:6px;
-      border: none;
-      background:#2c7be5;
-      color:white;
-      cursor:pointer;
-    }
+    /* main item row and nested sublist */
+    .item-row { display:flex; align-items:center; gap:8px; margin-top:6px; }
+    .item-row label { flex:1; display:flex; align-items:center; gap:8px; }
+    .qty { width:110px; flex:0 0 110px; }
+    .sublist { margin-left:28px; margin-top:6px; padding-left:6px; border-left:2px solid rgba(0,0,0,0.04); display:none; }
+    .sub-item { display:flex; align-items:center; gap:8px; margin-top:6px; }
+    .sub-item label { flex:1; display:flex; align-items:center; gap:8px; }
+    .checkbox-row { margin-top:6px; padding:0; }
+    .cb { display:block; width:100%; padding:6px 0; box-sizing:border-box; }
+    /* payment inline controls */
+    .mode-row { display:flex; align-items:center; gap:12px; margin-top:6px; }
+    .mode-row .mode-label { flex:1; display:flex; align-items:center; gap:8px; }
+    .mode-amount { width:160px; flex:0 0 160px; }
+    .total-row { margin-top:8px; display:flex; gap:12px; align-items:center; }
+    .total-row label { font-weight:600; }
+    button{ margin-top:12px; padding:10px 14px; font-size:16px; border-radius:6px; border: none; background:#2c7be5; color:white; cursor:pointer; }
     button#clearBtn { background:#6c757d; }
-
-    #msg{margin-top:10px;color:green;font-weight:600}
-    .offline-msg { margin-top:10px; color:#b71c1c; font-weight:700; font-size:15px }
+    .offline-msg { margin-top:10px; color:#b71c1c; font-weight:700; font-size:15px; }
     .small{font-size:13px;color:#666;margin-top:6px}
-    .form-actions {
-      display:flex;
-      gap:8px;
-      align-items:center;
-      margin-top:12px;
-      flex-wrap:wrap;
+    .form-actions { display:flex; gap:8px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+    @media (max-width:620px){
+      .item-row { flex-direction:column; align-items:flex-start }
+      .qty { width:100%; flex:0 0 auto }
+      .sub-item { flex-direction:column; align-items:flex-start }
+      .mode-row { flex-direction:column; align-items:stretch }
+      .mode-amount { width:100%; flex:auto }
+      .total-row { flex-direction:column; align-items:stretch }
     }
-    @media (max-width:420px){
-      .form-actions {flex-direction:column; align-items:stretch}
-      .form-actions button {width:100%}
-    }
+    /* make touch targets larger for checkboxes (and slightly larger radios) */
+input[type="checkbox"] {
+  transform: scale(1.45);
+  margin-right: 10px;
+  -webkit-transform: scale(1.45);
+  -webkit-margin-end: 10px;
+}
+input[type="radio"] {
+  transform: scale(1.25);
+  margin-right: 8px;
+  -webkit-transform: scale(1.25);
+}
+.cb input[type="checkbox"], .cb input[type="radio"] {
+  vertical-align: middle;
+}
+
   </style>
 </head>
 <body>
   <div class="container">
-    <a class="sheet-link"
-       href="https://docs.google.com/spreadsheets/d/1Y_jZC9R1sJ3ITSrR5qWbRvCN2bVHW27yjE4svuJaxN0/edit"
+     <a class="sheet-link"
+       href="https://docs.google.com/spreadsheets/d/1YyjZjRbePZ4fL40hKgJloSLJMzWZgW-6fFIvc-A7ELQ/edit"
        target="_blank" rel="noopener" aria-label="Open Google sheet">Google sheet</a>
-    <h1>Purchase Entry</h1>
+    <h1>Tile Purchase Entry</h1>
 
-    <!-- 1. Purchased what (checkboxes) -->
-<label class="q-label">1. Purchased what</label>
-<div class="checkbox-row" id="purchased">
-  <label class="cb"><input type="checkbox" value="Floor Tiles" class="purchased"> Floor Tiles</label>
-  <label class="cb"><input type="checkbox" value="Wall Tiles" class="purchased"> Wall Tiles</label>
-  <label class="cb"><input type="checkbox" value="Sanitaryware" class="purchased"> Sanitaryware</label>
-  <label class="cb"><input type="checkbox" value="Accessories" class="purchased"> Accessories</label>
-  <label class="cb"><input type="checkbox" value="Others" class="purchased"> Others</label>
-</div>
-<div id="purchasedOtherWrapper" style="display:none; margin-top:6px;">
-  <input id="purchasedOther" type="text" placeholder="If Others, please specify">
-</div>
+    <!-- Purchased items with inline qty and nested subitems -->
+    <label class="q-label">1. Purchased what (check items and enter quantity for specific sub-items)</label>
+    <div class="checkbox-row" id="purchasedList">
+      <!-- ... (same items block as before) ... -->
+      <!-- FLOOR TILES -->
+      <div class="item-row">
+        <label class="cb">
+          <input type="checkbox" class="purchased" id="p_floor" value="Floor Tiles"> Floor Tiles
+        </label>
+      </div>
+      <div class="sublist" id="sublist_floor">
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_floor_vitrified" value="Vitrified tiles"> Vitrified tiles (most popular for homes/offices)</label>
+          <input type="number" min="0" step="1" id="q_floor_vitrified" class="subqty qty" placeholder="How many" disabled>
+        </div>
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_floor_ceramic" value="Ceramic tiles"> Ceramic tiles</label>
+          <input type="number" min="0" step="1" id="q_floor_ceramic" class="subqty qty" placeholder="How many" disabled>
+        </div>
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_floor_porcelain" value="Porcelain tiles"> Porcelain tiles</label>
+          <input type="number" min="0" step="1" id="q_floor_porcelain" class="subqty qty" placeholder="How many" disabled>
+        </div>
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_floor_marble" value="Marble finish tiles"> Marble finish tiles</label>
+          <input type="number" min="0" step="1" id="q_floor_marble" class="subqty qty" placeholder="How many" disabled>
+        </div>
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_floor_granite" value="Granite finish tiles"> Granite finish tiles</label>
+          <input type="number" min="0" step="1" id="q_floor_granite" class="subqty qty" placeholder="How many" disabled>
+        </div>
+      </div>
 
+      <!-- WALL TILES -->
+      <div class="item-row">
+        <label class="cb">
+          <input type="checkbox" class="purchased" id="p_wall" value="Wall Tiles"> Wall Tiles
+        </label>
+      </div>
+      <div class="sublist" id="sublist_wall">
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_wall_kitchen" value="Kitchen wall tiles (backsplash)"> Kitchen wall tiles (backsplash)</label>
+          <input type="number" min="0" step="1" id="q_wall_kitchen" class="subqty qty" placeholder="How many" disabled>
+        </div>
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_wall_bath" value="Bathroom wall tiles (glazed/anti-skid)"> Bathroom wall tiles (glazed/anti-skid)</label>
+          <input type="number" min="0" step="1" id="q_wall_bath" class="subqty qty" placeholder="How many" disabled>
+        </div>
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_wall_decor" value="Decorative/Designer wall tiles"> Decorative / designer wall tiles</label>
+          <input type="number" min="0" step="1" id="q_wall_decor" class="subqty qty" placeholder="How many" disabled>
+        </div>
+      </div>
 
-    <label class="q-label">2. How many purchased</label>
-    <input id="qtyPurchased" type="number" min="0" step="1" placeholder="Enter quantity">
+      <!-- SANITARYWARE -->
+      <div class="item-row">
+        <label class="cb">
+          <input type="checkbox" class="purchased" id="p_san" value="Sanitaryware"> Sanitaryware
+        </label>
+      </div>
+      <div class="sublist" id="sublist_san">
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_san_wash" value="Washbasins"> Washbasins</label>
+          <input type="number" min="0" step="1" id="q_san_wash" class="subqty qty" placeholder="How many" disabled>
+        </div>
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_san_wc" value="WC"> WC</label>
+          <input type="number" min="0" step="1" id="q_san_wc" class="subqty qty" placeholder="How many" disabled>
+        </div>
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_san_urinal" value="Urinals"> Urinals</label>
+          <input type="number" min="0" step="1" id="q_san_urinal" class="subqty qty" placeholder="How many" disabled>
+        </div>
+      </div>
 
-    <label class="q-label">3. Purchased from whom</label>
-    <input id="purchasedFrom" type="text" placeholder="Vendor name or shop" autocomplete="off">
+      <!-- ACCESSORIES -->
+      <div class="item-row">
+        <label class="cb">
+          <input type="checkbox" class="purchased" id="p_acc" value="Accessories"> Accessories
+        </label>
+      </div>
+      <div class="sublist" id="sublist_acc">
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_acc_grout" value="Tile grout & adhesives"> Tile grout & adhesives</label>
+          <input type="number" min="0" step="1" id="q_acc_grout" class="subqty qty" placeholder="How many" disabled>
+        </div>
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_acc_spacers" value="Spacers"> Spacers</label>
+          <input type="number" min="0" step="1" id="q_acc_spacers" class="subqty qty" placeholder="How many" disabled>
+        </div>
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_acc_sealants" value="Sealants"> Sealants</label>
+          <input type="number" min="0" step="1" id="q_acc_sealants" class="subqty qty" placeholder="How many" disabled>
+        </div>
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_acc_chem" value="Chemicals"> Chemicals</label>
+          <input type="number" min="0" step="1" id="q_acc_chem" class="subqty qty" placeholder="How many" disabled>
+        </div>
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_acc_skirting" value="Skirting & border tiles"> Skirting & border tiles</label>
+          <input type="number" min="0" step="1" id="q_acc_skirting" class="subqty qty" placeholder="How many" disabled>
+        </div>
+        <div class="sub-item">
+          <label><input type="checkbox" class="subitem" id="sub_acc_mosaic" value="Mosaic tiles for decoration"> Mosaic tiles for decoration</label>
+          <input type="number" min="0" step="1" id="q_acc_mosaic" class="subqty qty" placeholder="How many" disabled>
+        </div>
+      </div>
 
-    <label class="q-label">4. Mode of payment <span style="color:red">*</span></label>
-    <div class="radio-row" id="modes">
-      <label><input type="radio" name="modeOfPayment" value="Cash"> Cash</label>
-      <label><input type="radio" name="modeOfPayment" value="Online"> Online</label>
-      <label><input type="radio" name="modeOfPayment" value="Credit"> Credit</label>
+      <!-- OTHERS (main) — keep simple: checked + custom name + qty -->
+      <div class="item-row">
+        <label class="cb">
+          <input type="checkbox" class="purchased" id="p_other" value="Others"> Others
+        </label>
+        <input type="number" min="0" step="1" id="q_other" class="qty" placeholder="How many" disabled>
+      </div>
+      <div style="margin-top:6px; margin-left:6px;">
+        <input id="purchasedOtherText" type="text" placeholder="If Others — specify (e.g. 'Grout, Adhesive')">
+      </div>
+
     </div>
 
-    <label class="q-label">5. Payment paid (₹) <span style="color:red">*</span></label>
-    <input id="paymentPaid" type="number" min="0" step="0.01" placeholder="Amount paid">
+    <!-- Purchased from -->
+    <label class="q-label">Purchased from</label>
+    <input id="purchasedFrom" type="text" placeholder="Vendor name">
 
-    <label class="q-label">6. Any other information</label>
+    <!-- Mode of payment (checkboxes with inline amounts) -->
+    <label class="q-label">Mode of payment (check modes and enter amounts for each)</label>
+    <div class="checkbox-row" id="modes">
+      <div class="mode-row">
+        <label class="mode-label"><input type="checkbox" name="modeOfPayment" value="Cash" id="mode_cash"> Cash</label>
+        <input type="number" min="0" step="0.01" id="amt_cash" class="mode-amount" placeholder="Cash Rs." disabled>
+      </div>
+      <div class="mode-row">
+        <label class="mode-label"><input type="checkbox" name="modeOfPayment" value="Online" id="mode_online"> Online</label>
+        <input type="number" min="0" step="0.01" id="amt_online" class="mode-amount" placeholder="Online Rs." disabled>
+      </div>
+      <div class="mode-row">
+        <label class="mode-label"><input type="checkbox" name="modeOfPayment" value="Credit" id="mode_credit"> Credit</label>
+        <input type="number" min="0" step="0.01" id="amt_credit" class="mode-amount" placeholder="Credit Rs." disabled>
+      </div>
+    </div>
+
+    <!-- Total (editable) -->
+    <label class="q-label">Payment paid (₹) <span style="color:red">*</span></label>
+    <input id="paymentPaid" type="number" min="0" step="0.01" placeholder="Total amount" >
+
+    <label class="q-label">Any other information</label>
     <textarea id="otherInfo" rows="2"></textarea>
 
     <div class="form-actions">
@@ -154,36 +253,193 @@
   </div>
 
   <script src="app.js"></script>
+
   <script>
-     // show/hide "Other - specify" for Purchased what
-  function handlePurchasedChange() {
-    const anyOther = Array.from(document.querySelectorAll('.purchased'))
-      .some(cb => cb.checked && cb.value === 'Others');
-    const wrapper = document.getElementById('purchasedOtherWrapper');
-    if (wrapper) wrapper.style.display = anyOther ? 'block' : 'none';
-  }
-  document.addEventListener('DOMContentLoaded', function(){
-    document.querySelectorAll('.purchased').forEach(cb => cb.addEventListener('change', handlePurchasedChange));
-    handlePurchasedChange(); // initial state
-  });
-    // local validation and wiring
-    document.getElementById('submitBtn').addEventListener('click', () => {
-      const purchasedChecked = document.querySelectorAll('.purchased:checked');
-      const payment = document.getElementById('paymentPaid').value.trim();
-      const mode = document.querySelector('input[name="modeOfPayment"]:checked');
+    // Wiring for showing nested sublists and enabling sub-qty fields
+    document.addEventListener('DOMContentLoaded', function() {
+      // map main checkbox id -> sublist id
+      const mainToSub = {
+        'p_floor': 'sublist_floor',
+        'p_wall': 'sublist_wall',
+        'p_san':  'sublist_san',
+        'p_acc':  'sublist_acc'
+      };
 
-      if (!purchasedChecked || purchasedChecked.length === 0) { alert("Please select at least one purchased item."); return; }
-      if (!payment) { alert("Payment paid is required."); return; }
-      if (!mode) { alert("Please select a mode of payment."); return; }
+      // show/hide sublist when main toggles
+      Object.keys(mainToSub).forEach(mainId => {
+        const mainCb = document.getElementById(mainId);
+        const subDiv = document.getElementById(mainToSub[mainId]);
+        if (!mainCb || !subDiv) return;
+        function update() {
+          subDiv.style.display = mainCb.checked ? 'block' : 'none';
+          // if hidden, also clear any sub-checkboxes and qtys
+          if (!mainCb.checked) {
+            subDiv.querySelectorAll('.subitem').forEach(sb => { sb.checked = false; });
+            subDiv.querySelectorAll('.subqty').forEach(q => { q.value=''; q.disabled = true; });
+          }
+        }
+        mainCb.addEventListener('change', update);
+        update();
+      });
 
-      if (typeof submitForm === "function") {
-        submitForm();
+      // generic subitem checkbox -> enable its qty input
+      document.querySelectorAll('.subitem').forEach(function(subCb) {
+        const id = subCb.id; // e.g. sub_floor_ceramic
+        const qtyId = 'q' + id.slice(3); // 'q_floor_ceramic'
+        const qtyEl = document.getElementById(qtyId);
+        subCb.addEventListener('change', function() {
+          if (qtyEl) {
+            qtyEl.disabled = !subCb.checked;
+            if (!subCb.checked) qtyEl.value = '';
+          }
+        });
+        // initial
+        if (qtyEl) qtyEl.disabled = !subCb.checked;
+      });
+
+      // Others main checkbox -> enable its qty and optionally focus the other-text
+      const otherMain = document.getElementById('p_other');
+      const otherQty = document.getElementById('q_other');
+      const otherText = document.getElementById('purchasedOtherText');
+      if (otherMain && otherQty) {
+        function updOther() {
+          otherQty.disabled = !otherMain.checked;
+          if (!otherMain.checked) otherQty.value = '';
+        }
+        otherMain.addEventListener('change', updOther);
+        updOther();
       }
-    });
 
-    // Clear button
-    const clearBtn = document.getElementById('clearBtn');
-    if (clearBtn) clearBtn.addEventListener('click', function(){ if (typeof clearForm === 'function') { clearForm(); showMessage('Form cleared'); } });
+      // --- Payment mode handling (checkboxes + amounts + total) ---
+      const modeCash = document.getElementById('mode_cash');
+      const modeOnline = document.getElementById('mode_online');
+      const modeCredit = document.getElementById('mode_credit');
+      const amtCash = document.getElementById('amt_cash');
+      const amtOnline = document.getElementById('amt_online');
+      const amtCredit = document.getElementById('amt_credit');
+      const totalInput = document.getElementById('paymentPaid');
+      const otherInfo = document.getElementById('otherInfo');
+
+      // track if user manually edited total (true => preserve until amounts change)
+      let manualTotalOverride = false;
+
+      function recomputeTotalFromParts() {
+        // if manual override is active, do not auto-update
+        if (manualTotalOverride) return;
+        const v1 = parseFloat(amtCash.value) || 0;
+        const v2 = parseFloat(amtOnline.value) || 0;
+        const v3 = parseFloat(amtCredit.value) || 0;
+        const sum = (v1 + v2 + v3);
+        // set total input (to 2 decimals)
+        totalInput.value = (Math.round(sum * 100) / 100) || (sum === 0 ? '' : sum);
+      }
+
+      function updateModeEnabled(cb, amtEl) {
+        if (!cb || !amtEl) return;
+        amtEl.disabled = !cb.checked;
+        if (!cb.checked) amtEl.value = '';
+        // changing an amount should clear manual override and recompute
+        amtEl.addEventListener('input', function() {
+          manualTotalOverride = false;
+          recomputeTotalFromParts();
+        });
+      }
+
+      [modeCash, modeOnline, modeCredit].forEach((cb, idx) => {
+        const amtEl = (idx === 0 ? amtCash : (idx === 1 ? amtOnline : amtCredit));
+        if (!cb) return;
+        // when checkbox toggled, enable/disable its amount and recompute
+        cb.addEventListener('change', function() {
+          updateModeEnabled(cb, amtEl);
+          // changing modes clears manual override
+          manualTotalOverride = false;
+          recomputeTotalFromParts();
+          // set combined mode string into first checked element's value so existing app.js picks combined modes
+          writeCombinedModeValue();
+        });
+        // also update initial state
+        updateModeEnabled(cb, amtEl);
+      });
+
+      // When user edits total directly, mark override so amounts won't clobber their edit
+      totalInput.addEventListener('input', function() {
+        manualTotalOverride = true;
+      });
+
+      // write combined mode string into the first-checked mode input's value (so collectFormData sees combined string)
+      function writeCombinedModeValue() {
+        const selected = [];
+        if (modeCash.checked) selected.push('Cash');
+        if (modeOnline.checked) selected.push('Online');
+        if (modeCredit.checked) selected.push('Credit');
+        const combined = selected.join(', ');
+        // reset values to defaults first
+        if (modeCash) modeCash.value = 'Cash';
+        if (modeOnline) modeOnline.value = 'Online';
+        if (modeCredit) modeCredit.value = 'Credit';
+        if (selected.length === 0) return;
+        // set the first checked checkbox's value attr to combined string
+        const firstChecked = document.querySelector('input[name="modeOfPayment"]:checked');
+        if (firstChecked) firstChecked.value = combined;
+      }
+
+      // also, before submit, assemble a breakdown string and put it into otherInfo (if empty)
+      // e.g. "Cash Rs.3000, Online Rs.5000, Credit Rs.15000"
+      function buildPaymentBreakdownString() {
+        const parts = [];
+        if (modeCash.checked) {
+          const v = (amtCash.value && amtCash.value.toString().trim() !== '') ? Number(amtCash.value) : 0;
+          parts.push('Cash Rs.' + (v || 0));
+        }
+        if (modeOnline.checked) {
+          const v = (amtOnline.value && amtOnline.value.toString().trim() !== '') ? Number(amtOnline.value) : 0;
+          parts.push('Online Rs.' + (v || 0));
+        }
+        if (modeCredit.checked) {
+          const v = (amtCredit.value && amtCredit.value.toString().trim() !== '') ? Number(amtCredit.value) : 0;
+          parts.push('Credit Rs.' + (v || 0));
+        }
+        return parts.join(', ');
+      }
+
+      // initial combined write
+      writeCombinedModeValue();
+
+      // Hook into submit to ensure total is correct and combined mode value is applied
+      const submitBtn = document.getElementById('submitBtn');
+      if (submitBtn) {
+        submitBtn.addEventListener('click', function() {
+          // If user has not manually edited total, compute final total from amounts
+          if (!manualTotalOverride) recomputeTotalFromParts();
+
+          // If user did edit total, keep it as-is (but still compute a breakdown for otherInfo)
+          const finalTotalStr = (totalInput.value && totalInput.value.toString().trim() !== '') ? totalInput.value : '';
+          // If no total but there are mode amounts, recompute now
+          if (!finalTotalStr) recomputeTotalFromParts();
+
+          // ensure combined mode value present on first checked field
+          writeCombinedModeValue();
+
+          // ensure at least one mode is checked (app.js validation expects this)
+          const modeChecked = document.querySelector('input[name="modeOfPayment"]:checked');
+          if (!modeChecked) {
+            alert('Please select a mode of payment.');
+            return;
+          }
+
+          // Put the breakdown into otherInfo only if user didn't type anything there
+          try {
+            const breakdown = buildPaymentBreakdownString();
+            if (otherInfo && (!otherInfo.value || otherInfo.value.trim() === '')) {
+              otherInfo.value = breakdown;
+            }
+          } catch(e){ /* ignore */ }
+
+          // after this, the existing app.js will collect form fields as usual and submit
+        });
+      }
+
+    });
   </script>
 </body>
 </html>
